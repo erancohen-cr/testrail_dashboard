@@ -29,3 +29,5 @@ docker run -p 3000:3000 --env-file .env.local -v trd-data:/app/data testrail-das
 Serve it over HTTPS, or set `INSECURE_COOKIES=1` for plain http on an internal host.
 
 TestRail responses are cached in memory for `CACHE_TTL_S` seconds (default 300) per user, endpoint and params. **Refresh results** bypasses the cache.
+
+At most `TR_MAX_PARALLEL` requests (default 5) run against TestRail at once per account; the rest queue. Rate-limited (429) and unavailable (503) responses are retried up to 4 times, honouring `Retry-After` or backing off 1s, 2s, 4s, 8s.
