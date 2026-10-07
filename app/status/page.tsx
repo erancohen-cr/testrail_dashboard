@@ -102,10 +102,10 @@ export default function StatusPage() {
 
   const match = (name: string) => name.toLowerCase().includes(filter.toLowerCase());
   const groups: [string, keyof Sel, { id: number; name: string }[] | undefined][] = [
-    ["Feature suites", "suiteIds", feats.data?.suites],
+    ["Feature Suites", "suiteIds", feats.data?.suites],
     ["Features", "featureIds", feats.data?.features],
-    ["Test plans", "planIds", plans.data?.filter((p) => showCompleted || !p.is_completed)],
-    ["Test runs", "runIds", runs.data?.filter((r) => showCompleted || !r.is_completed)],
+    ["Test Plans", "planIds", plans.data?.filter((p) => showCompleted || !p.is_completed)],
+    ["Test Runs", "runIds", runs.data?.filter((r) => showCompleted || !r.is_completed)],
   ];
 
   const cards = useMemo(() => {
@@ -124,7 +124,7 @@ export default function StatusPage() {
           <ProjectSelect value={projectId} onChange={(id) => { setProjectId(id); setSel(EMPTY); }} />
         </div>
         <div className="flex items-center justify-between">
-          <span className="label mb-0">Data sources</span>
+          <span className="label mb-0">Data Sources</span>
           <span className="text-xs text-slate-500">{Object.values(sel).flat().length} selected</span>
         </div>
         <input className="input" placeholder="Filter plans, runs, features…" value={filter} onChange={(e) => setFilter(e.target.value)} />
@@ -151,14 +151,14 @@ export default function StatusPage() {
       <main className="min-w-0 flex-1 overflow-auto p-6">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <h1 className="text-lg font-semibold">Test status</h1>
+            <h1 className="text-lg font-semibold">Test Status</h1>
             <p className="text-sm text-slate-500">Suite, feature, plan and run progress</p>
           </div>
           <div className="flex gap-2">
             <select className="input w-48" value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)}>
               {Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>Sort: {v}</option>)}
             </select>
-            <Link href="/features" className="btn-ghost whitespace-nowrap">Configure features</Link>
+            <Link href="/features" className="btn-ghost whitespace-nowrap">Configure Features</Link>
           </div>
         </div>
         <ErrorNote msg={error} />

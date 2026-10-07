@@ -33,7 +33,7 @@ export default function Settings() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-8">
-      <h1 className="text-lg font-semibold">Your TestRail connection</h1>
+      <h1 className="text-lg font-semibold">Your TestRail Connection</h1>
       <p className="mt-1 text-sm text-slate-600">
         By default the dashboard reads TestRail through a shared readonly account. You can use your own account instead. Your API key is stored encrypted in an httpOnly cookie and never sent back to the browser.
       </p>

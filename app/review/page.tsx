@@ -111,7 +111,7 @@ export default function ReviewPage() {
     <main className="flex h-[calc(100vh-3rem)] flex-col px-6 py-5">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-lg font-semibold">Test case review</h1>
+          <h1 className="text-lg font-semibold">Test Case Review</h1>
           <p className="text-sm text-slate-500">{rows.length} of {cases.data?.length ?? 0} cases</p>
         </div>
         <div className="flex gap-2">

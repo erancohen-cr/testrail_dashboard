@@ -27,7 +27,7 @@ export function Nav() {
   const items = [
     ["/status", "Status"],
     ["/features", "Features"],
-    ["/review", "Test review"],
+    ["/review", "Test Review"],
     ["/settings", "Settings"],
   ];
   return (

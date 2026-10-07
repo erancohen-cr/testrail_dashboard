@@ -60,15 +60,15 @@ export default function FeaturesPage() {
         </div>
         <div className="flex gap-2">
           <div className="w-56"><ProjectSelect value={projectId} onChange={setProjectId} /></div>
-          <button className="btn-ghost whitespace-nowrap" disabled={!projectId} onClick={() => setEditing({ kind: "suite" })}>+ New feature suite</button>
-          <button className="btn whitespace-nowrap" disabled={!projectId} onClick={() => setEditing({ kind: "feature" })}>+ New feature</button>
+          <button className="btn-ghost whitespace-nowrap" disabled={!projectId} onClick={() => setEditing({ kind: "suite" })}>+ New Feature Suite</button>
+          <button className="btn whitespace-nowrap" disabled={!projectId} onClick={() => setEditing({ kind: "feature" })}>+ New Feature</button>
         </div>
       </div>
       <ErrorNote msg={error ?? loaded.error} />
 
       {data && (
         <>
-          <h2 className="mb-2 mt-4 text-sm font-semibold text-slate-600">Feature suites</h2>
+          <h2 className="mb-2 mt-4 text-sm font-semibold text-slate-600">Feature Suites</h2>
           {!data.suites.length && <p className="text-sm text-slate-400">No feature suites yet.</p>}
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {data.suites.map((s) => (
@@ -88,10 +88,10 @@ export default function FeaturesPage() {
         </>
       )}
 
-      <dialog ref={dlg} onClose={() => setEditing(null)} className={`m-auto rounded-xl bg-white p-6 shadow-xl ${editing?.kind === "suite" ? "w-[min(520px,95vw)]" : "w-[min(1100px,95vw)]"}`}>
+      <dialog ref={dlg} onClose={() => setEditing(null)} className={`m-auto rounded-xl bg-white p-6 shadow-xl ${editing?.kind === "suite" ? "w-[min(520px,95vw)]" : "w-[min(720px,95vw)]"}`}>
         {editing && projectId && (
           <>
-            <h2 className="mb-4 text-lg font-semibold">{editing.item ? "Edit" : "New"} {editing.kind === "suite" ? "feature suite" : "feature"}</h2>
+            <h2 className="mb-4 text-lg font-semibold">{editing.item ? "Edit" : "New"} {editing.kind === "suite" ? "Feature Suite" : "Feature"}</h2>
             {editing.kind === "feature"
               ? <FeatureForm key={editing.item?.id ?? "new"} projectId={projectId} initial={editing.item} onSave={save} onCancel={() => setEditing(null)} />
               : <SuiteForm key={editing.item?.id ?? "new"} projectId={projectId} features={data?.features ?? []} initial={editing.item} onSave={save} onCancel={() => setEditing(null)} />}

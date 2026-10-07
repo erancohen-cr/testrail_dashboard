@@ -4,7 +4,7 @@ import type { Card, Row } from "@/lib/aggregate";
 import { statusName } from "@/lib/aggregate";
 import { Bar, STATUS_TEXT } from "./ui";
 
-const TABS = ["Plans & runs", "Sections", "Tests"] as const;
+const TABS = ["Plans & Runs", "Sections", "Tests"] as const;
 
 function RowsTable({ rows, first, showType }: { rows: Row[]; first: string; showType?: boolean }) {
   return (
@@ -33,7 +33,7 @@ function RowsTable({ rows, first, showType }: { rows: Row[]; first: string; show
 
 export function DrillDown({ card, url, onClose }: { card: Card | null; url: string; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [tab, setTab] = useState<(typeof TABS)[number]>("Plans & runs");
+  const [tab, setTab] = useState<(typeof TABS)[number]>("Plans & Runs");
   const [q, setQ] = useState("");
   useEffect(() => {
     if (card) ref.current?.showModal();
@@ -59,7 +59,7 @@ export function DrillDown({ card, url, onClose }: { card: Card | null; url: stri
             ))}
           </div>
           <div className="mt-3 overflow-auto px-6 pb-6">
-            {tab === "Plans & runs" && <RowsTable rows={card.bySource} first="Source" showType />}
+            {tab === "Plans & Runs" && <RowsTable rows={card.bySource} first="Source" showType />}
             {tab === "Sections" && <RowsTable rows={card.bySection} first="Section" />}
             {tab === "Tests" && (
               <>
