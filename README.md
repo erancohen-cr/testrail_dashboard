@@ -26,6 +26,8 @@ Requires Node ≥ 22.13 (uses the built-in `node:sqlite`).
 docker build -t testrail-dashboard .
 docker run -p 3000:3000 --env-file .env.local -v trd-data:/app/data testrail-dashboard
 ```
+On the server, `./deploy.sh` does all of this: it pulls from git, rebuilds the image, restarts the container on port 80 (override with `PORT=8080 ./deploy.sh`) and waits until the app answers.
+
 Serve it over HTTPS, or set `INSECURE_COOKIES=1` for plain http on an internal host.
 
 TestRail responses are cached in memory for `CACHE_TTL_S` seconds (default 300) per user, endpoint and params. **Refresh results** bypasses the cache.
