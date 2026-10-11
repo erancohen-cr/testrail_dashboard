@@ -9,12 +9,24 @@ type Col = { key: string; label: string; get: (c: any) => string | number };
 const fmtDate = (s?: number) => (s ? new Date(s * 1000).toISOString().slice(0, 10) : "");
 const automationKey = (c: any) => Object.keys(c).find((k) => /^custom_.*automat/i.test(k));
 
+// TestRail stores rich-text fields as HTML. Show them as plain text: parsing with DOMParser
+// never runs scripts, and we only read text, so nothing from TestRail is injected as markup.
+// ponytail: plain text only (images/tables flattened); render a sanitised HTML subset if formatting matters.
+function htmlToText(html?: string): string {
+  if (!html || !/[<&]/.test(html)) return html ?? "";
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  doc.querySelectorAll("br").forEach((el) => el.replaceWith("\n"));
+  doc.querySelectorAll("li").forEach((el) => el.prepend("• "));
+  doc.querySelectorAll("p, div, li, tr, h1, h2, h3, h4, h5, h6, pre, blockquote").forEach((el) => el.append("\n"));
+  return (doc.body.textContent ?? "").replace(/\u00a0/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+}
+
 function Steps({ c }: { c: any }) {
   const block = (label: string, text?: string) =>
     text ? (
       <div>
         <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</div>
-        <div className="whitespace-pre-wrap text-sm">{text}</div>
+        <div className="whitespace-pre-wrap text-sm">{htmlToText(text)}</div>
       </div>
     ) : null;
   const sep: { content?: string; expected?: string }[] | undefined = c.custom_steps_separated;
@@ -28,8 +40,8 @@ function Steps({ c }: { c: any }) {
             {sep.map((s, i) => (
               <tr key={i} className="align-top">
                 <td className="td text-slate-400">{i + 1}</td>
-                <td className="td whitespace-pre-wrap">{s.content}</td>
-                <td className="td whitespace-pre-wrap">{s.expected}</td>
+                <td className="td whitespace-pre-wrap">{htmlToText(s.content)}</td>
+                <td className="td whitespace-pre-wrap">{htmlToText(s.expected)}</td>
               </tr>
             ))}
           </tbody>
@@ -60,6 +72,7 @@ export default function ReviewPage() {
   const sections = useApi<Section[]>(projectId && sid ? `/api/tr/get_sections/${projectId}?suite_id=${sid}` : null);
   const cases = useApi<any[]>(projectId && sid ? `/api/tr/get_cases/${projectId}?suite_id=${sid}` : null);
   const users = useApi<any[]>(projectId ? `/api/tr/get_users/${projectId}` : null);
+  const conn = useApi<{ url: string }>("/api/connection");
   const priorities = useApi<any[]>("/api/tr/get_priorities");
   const types = useApi<any[]>("/api/tr/get_case_types");
 
@@ -175,7 +188,21 @@ export default function ReviewPage() {
                         <tr className="cursor-pointer hover:bg-slate-50" onClick={() => setOpen(isOpen ? open.filter((x) => x !== r.id) : [...open, r.id])}>
                           {shown.map((c) => (
                             <td key={c.key} className={`td ${c.key === "id" ? "whitespace-nowrap text-accent" : ""}`}>
-                              {c.key === "id" ? <>{isOpen ? "▾" : "▸"} C{r.id}</> : c.get(r)}
+                              {c.key === "id" ? (
+                                <>
+                                  <span className="text-slate-400">{isOpen ? "▾" : "▸"}</span>{" "}
+                                  <a
+                                    className="hover:underline"
+                                    href={`${conn.data?.url ?? ""}/index.php?/cases/view/${r.id}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    title="Open in TestRail"
+                                  >
+                                    C{r.id}
+                                  </a>
+                                </>
+                              ) : c.get(r)}
                             </td>
                           ))}
                         </tr>
