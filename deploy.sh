@@ -2,6 +2,7 @@
 # Update from git, rebuild the Docker image, and (re)start the app.
 # Usage: ./deploy.sh            (on the server, from anywhere)
 #        PORT=8080 ./deploy.sh  (override host port; default 80)
+#        FORCE=1 ./deploy.sh    (rebuild even if git has no new commits)
 set -euo pipefail
 
 NAME="${NAME:-testrail-dashboard}"
@@ -17,8 +18,16 @@ if [ "$(id -u)" -ne 0 ] && ! docker info >/dev/null 2>&1; then DOCKER="sudo dock
 [ -f .env ] || { echo "Missing $DIR/.env (copy .env.example and fill it in)"; exit 1; }
 
 echo "==> Pulling latest code"
+before="$(git rev-parse HEAD)"
 git pull --ff-only
 echo "    now at $(git log -1 --format='%h %s')"
+
+# Nothing new and the app is already running: done. FORCE=1 redeploys anyway.
+running="$($DOCKER inspect -f '{{.State.Running}}' "$NAME" 2>/dev/null || true)"
+if [ "$before" = "$(git rev-parse HEAD)" ] && [ "$running" = "true" ] && [ "${FORCE:-0}" != "1" ]; then
+  echo "==> No code changes and $NAME is running; nothing to do (FORCE=1 to redeploy)"
+  exit 0
+fi
 
 echo "==> Building image (app keeps running meanwhile)"
 $DOCKER build -t "$NAME" .
